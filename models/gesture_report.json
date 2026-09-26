@@ -1,0 +1,129 @@
+{
+  "classes": [
+    "MOVE",
+    "PINCH_INDEX",
+    "PINCH_MIDDLE",
+    "SCROLL",
+    "FIST"
+  ],
+  "synthetic_val_accuracy": 0.9962666666666666,
+  "confusion": [
+    [
+      2971,
+      3,
+      0,
+      0,
+      26
+    ],
+    [
+      1,
+      2997,
+      2,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      2999,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      3000,
+      0
+    ],
+    [
+      23,
+      0,
+      0,
+      0,
+      2977
+    ]
+  ],
+  "onnx_torch_max_abs_diff": 2.384185791015625e-07,
+  "real_photos": {
+    "fist.jpg": {
+      "expected": "FIST",
+      "predicted": "FIST",
+      "probs": [
+        0.0079,
+        0.0137,
+        0.0126,
+        0.0123,
+        0.9535
+      ]
+    },
+    "pointing_up.jpg": {
+      "expected": "MOVE",
+      "predicted": "MOVE",
+      "probs": [
+        0.9581,
+        0.0096,
+        0.0102,
+        0.011,
+        0.011
+      ]
+    },
+    "pointing_up_rotated.jpg": {
+      "expected": "MOVE",
+      "predicted": "MOVE",
+      "probs": [
+        0.96,
+        0.009,
+        0.0092,
+        0.0106,
+        0.0112
+      ]
+    },
+    "victory.jpg": {
+      "expected": "SCROLL",
+      "predicted": "SCROLL",
+      "probs": [
+        0.0632,
+        0.0213,
+        0.0272,
+        0.8602,
+        0.0281
+      ]
+    },
+    "thumb_up.jpg": {
+      "expected": "MOVE",
+      "predicted": "MOVE",
+      "probs": [
+        0.9537,
+        0.0141,
+        0.0145,
+        0.0087,
+        0.0089
+      ]
+    },
+    "right_hands.jpg": {
+      "expected": "MOVE",
+      "predicted": "MOVE",
+      "probs": [
+        0.9566,
+        0.0111,
+        0.0115,
+        0.0117,
+        0.0091
+      ]
+    },
+    "left_hands.jpg": {
+      "expected": "MOVE",
+      "predicted": "MOVE",
+      "probs": [
+        0.8844,
+        0.0183,
+        0.0308,
+        0.0304,
+        0.036
+      ]
+    }
+  },
+  "train_samples": 150000,
+  "params": 7493
+}

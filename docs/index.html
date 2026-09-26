@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mausely – Hand Gesture Mouse for Windows | Control Your PC with a Webcam</title>
+<meta name="description" content="Free, open-source AI hand gesture mouse for Windows. Control your PC with hand gestures and any webcam: move, click, drag and scroll. Offline, fast, written in C++.">
+<meta name="keywords" content="hand gesture mouse, virtual mouse, control mouse with hand gestures, webcam mouse, touchless mouse, hand tracking, gesture control Windows, air mouse, MediaPipe C++, ONNX Runtime, accessibility">
+<meta name="author" content="mahdidigitalx-oss">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://mahdidigitalx-oss.github.io/mausely/">
+<link rel="icon" type="image/png" href="icon.png">
+<meta name="theme-color" content="#0f1116">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mausely">
+<meta property="og:title" content="Mausely – Control your mouse with hand gestures and any webcam">
+<meta property="og:description" content="Free, open-source, offline AI virtual mouse for Windows. Move, click, drag and scroll with your hand. About 8 ms per frame, even on old laptops.">
+<meta property="og:url" content="https://mahdidigitalx-oss.github.io/mausely/">
+<meta property="og:image" content="https://mahdidigitalx-oss.github.io/mausely/banner.jpg">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta property="og:image:alt" content="Mausely dashboard tracking a hand through the webcam">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mausely – AI hand gesture mouse for Windows">
+<meta name="twitter:description" content="Control your PC with hand gestures and any webcam. Free, open source, offline.">
+<meta name="twitter:image" content="https://mahdidigitalx-oss.github.io/mausely/banner.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Mausely",
+  "alternateName": "Mausely Hand Gesture Mouse",
+  "description": "Free, open-source AI hand gesture mouse for Windows. Control the mouse pointer with hand gestures through any webcam: move, left click, double click, drag, right click and scroll. Runs offline on the CPU.",
+  "applicationCategory": "UtilitiesApplication",
+  "applicationSubCategory": "Accessibility",
+  "operatingSystem": "Windows 10, Windows 11",
+  "softwareVersion": "0.1.0",
+  "license": "https://opensource.org/licenses/MIT",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "downloadUrl": "https://github.com/mahdidigitalx-oss/mausely/releases/latest",
+  "codeRepository": "https://github.com/mahdidigitalx-oss/mausely",
+  "programmingLanguage": ["C++", "Python"],
+  "screenshot": "https://mahdidigitalx-oss.github.io/mausely/screenshots/dashboard-performance.jpg",
+  "image": "https://mahdidigitalx-oss.github.io/mausely/banner.jpg",
+  "author": { "@type": "Person", "name": "mahdidigitalx-oss", "url": "https://github.com/mahdidigitalx-oss" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "How do I control my mouse with hand gestures on Windows?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Download Mausely, run mausely.exe, show your palm to the webcam and press Ctrl+Alt+M. Move your open hand to move the cursor, pinch thumb and index finger to click, and make a V sign to scroll."}},
+    {"@type": "Question", "name": "Does a hand gesture mouse need a GPU or a special camera?",
+     "acceptedAnswer": {"@type": "Answer", "text": "No. Mausely runs on the CPU with any normal webcam and needs no internet connection. It was developed on a 2012 laptop."}},
+    {"@type": "Question", "name": "Is Mausely free?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Yes. Mausely is free and open source under the MIT license."}},
+    {"@type": "Question", "name": "Does Mausely work for left-handed users?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Yes. Its gesture features do not depend on handedness, so left and right hands are recognised the same way."}}
+  ]
+}
+</script>
+
+<style>
+:root {
+  --bg: #0f1116; --surface: #171a21; --surface2: #1e222b; --border: #2a303b;
+  --text: #e9edf3; --muted: #9aa4b2; --accent: #3d9ef5; --accent2: #3dd6c6; --good: #4cc27a;
+}
+@media (prefers-color-scheme: light) {
+  :root { --bg: #f7f8fa; --surface: #ffffff; --surface2: #eef1f5; --border: #dde2ea;
+          --text: #14171c; --muted: #5a6472; --accent: #1f6fd8; --accent2: #0f9e8f; --good: #1f8a4c; }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text);
+       font: 17px/1.6 "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+header { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent);
+         backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+header .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 19px; color: var(--text); }
+.brand img { width: 30px; height: 30px; border-radius: 7px; }
+nav a { color: var(--muted); margin-left: 22px; font-size: 15px; }
+.hero { padding-top: 64px; padding-bottom: 36px; text-align: center; }
+.hero h1 { font-size: clamp(34px, 5.5vw, 58px); line-height: 1.1; margin: 0 0 18px; letter-spacing: -0.02em; }
+.hero h1 span { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text;
+                background-clip: text; color: transparent; }
+.hero p.lead { font-size: clamp(17px, 2vw, 21px); color: var(--muted); max-width: 760px; margin: 0 auto 30px; }
+.cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 24px; border-radius: 10px; font-weight: 600;
+       border: 1px solid var(--border); color: var(--text); background: var(--surface); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:hover { text-decoration: none; filter: brightness(1.08); }
+.note { color: var(--muted); font-size: 14px; margin-top: 14px; }
+.shot { margin: 44px auto 0; max-width: 1040px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border);
+        box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+.shot img { display: block; width: 100%; height: auto; }
+section { padding: 56px 0; }
+h2 { font-size: clamp(26px, 3.4vw, 36px); margin: 0 0 10px; letter-spacing: -0.01em; }
+.sub { color: var(--muted); margin: 0 0 32px; max-width: 760px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
+.card h3 { margin: 0 0 8px; font-size: 18px; }
+.card p { margin: 0; color: var(--muted); font-size: 15.5px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 18px; margin-top: 8px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.stat b { display: block; font-size: 32px; color: var(--good); }
+.stat span { color: var(--muted); font-size: 14.5px; }
+table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border);
+        border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 13px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--surface2); font-size: 14px; color: var(--muted); font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 600; white-space: nowrap; }
+.table-scroll { overflow-x: auto; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.gallery figure { margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.gallery img { display: block; width: 100%; height: auto; }
+.gallery figcaption { padding: 12px 16px; color: var(--muted); font-size: 14.5px; }
+ol.steps { padding-left: 22px; } ol.steps li { margin-bottom: 8px; }
+code { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; font-size: 14.5px; }
+details { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; }
+summary { cursor: pointer; font-weight: 600; }
+details p { color: var(--muted); margin: 10px 0 0; }
+footer { border-top: 1px solid var(--border); padding: 32px 0 44px; color: var(--muted); font-size: 14.5px; }
+@media (max-width: 640px) { nav a:not(.gh) { display: none; } section { padding: 40px 0; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="icon.png" alt="" width="30" height="30">Mausely</a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#gestures">Gestures</a>
+      <a href="#faq">FAQ</a>
+      <a class="gh" href="https://github.com/mahdidigitalx-oss/mausely">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <h1>Control your mouse with<br><span>hand gestures</span> and any webcam</h1>
+    <p class="lead">Mausely is a free, open-source AI <strong>hand gesture mouse for Windows</strong>. Move the pointer,
+      click, drag and scroll with your hand, touch-free, offline, and fast enough for a 2012 laptop.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/mahdidigitalx-oss/mausely/releases/latest">⬇ Download for Windows</a>
+      <a class="btn" href="https://github.com/mahdidigitalx-oss/mausely">★ View on GitHub</a>
+    </div>
+    <p class="note">Windows 10 / 11 · any webcam · no GPU, no internet, no installation · MIT license</p>
+    <div class="shot"><img src="screenshots/dashboard-performance.jpg" width="1582" height="903"
+      alt="Mausely dashboard: webcam hand tracking with skeleton overlay, detected scroll gesture and latency statistics"></div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <h2>A virtual mouse that feels like a real one</h2>
+      <p class="sub">Most webcam "virtual mouse" projects are Python scripts with a shaky cursor. Mausely is a native
+        C++ app with its own small AI models for gesture recognition and pointer smoothing.</p>
+      <div class="grid">
+        <div class="card"><h3>🖐️ Real-time hand tracking</h3><p>MediaPipe palm detection and 21-point hand landmarks run through ONNX Runtime on the CPU in about 8 ms per frame.</p></div>
+        <div class="card"><h3>🧠 Gesture AI</h3><p>A 7.5k-parameter neural network recognises move, pinch, right-click, scroll and fist poses. It works the same for left and right hands.</p></div>
+        <div class="card"><h3>🎯 Steady, precise cursor</h3><p>A learned smoother removed 65% of cursor jitter in tests without adding lag, and click rewind stops a pinch from dragging the pointer off its target.</p></div>
+        <div class="card"><h3>📊 Live statistics</h3><p>The dashboard shows per-stage timings (p50/p95), end-to-end latency, CPU usage, jitter before and after smoothing, and gesture probabilities.</p></div>
+        <div class="card"><h3>🔒 Private and offline</h3><p>No cloud and no network access at run time. Camera images are never stored.</p></div>
+        <div class="card"><h3>🎓 Learns your hand</h3><p>Record a minute of each gesture in the dashboard and retrain the gesture model on your own CPU in a few minutes.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gestures">
+    <div class="wrap">
+      <h2>Seven mouse actions, one hand</h2>
+      <p class="sub">The app starts paused. Press <code>Ctrl+Alt+M</code> or hold a fist for one second to take control.</p>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Mouse action</th><th>Hand gesture</th></tr></thead>
+        <tbody>
+          <tr><td>Move the cursor</td><td>Open or relaxed hand; the palm centre drives the pointer</td></tr>
+          <tr><td>Left click</td><td>Touch thumb and index fingertips, then release</td></tr>
+          <tr><td>Double click</td><td>Two quick index pinches; the second lands exactly on the first</td></tr>
+          <tr><td>Drag and drop</td><td>Pinch with the index finger, move, release</td></tr>
+          <tr><td>Right click</td><td>Touch thumb and middle fingertips</td></tr>
+          <tr><td>Scroll</td><td>Index and middle fingers up (V sign), move the hand up, down or sideways</td></tr>
+          <tr><td>Pause / resume</td><td>Hold a fist for 1 second, or press <code>Ctrl+Alt+M</code></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="performance">
+    <div class="wrap">
+      <h2>Fast on old hardware</h2>
+      <p class="sub">Measured on an Intel Core i7-3740QM (2012, no AVX2) with a built-in 720p webcam, CPU only.</p>
+      <div class="stats">
+        <div class="stat"><b>~7.5 ms</b><span>frame arrival → mouse event (p50)</span></div>
+        <div class="stat"><b>0.06 ms</b><span>gesture AI per frame</span></div>
+        <div class="stat"><b>−65%</b><span>cursor jitter with the AI smoother (test data)</span></div>
+        <div class="stat"><b>99.6%</b><span>gesture accuracy on held-out test data</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screenshots">
+    <div class="wrap">
+      <h2>Screenshots</h2>
+      <div class="gallery">
+        <figure><img src="screenshots/dashboard-smoothing.jpg" width="1582" height="903" loading="lazy" alt="Cursor jitter reduced by 86 percent with the AI smoother"><figcaption>AI smoothing: 86% less jitter on a still hand.</figcaption></figure>
+        <figure><img src="screenshots/dashboard-gestures.jpg" width="1582" height="903" loading="lazy" alt="Gesture AI recognising a fist with 95 percent confidence"><figcaption>Gesture AI probabilities and click counters.</figcaption></figure>
+        <figure><img src="screenshots/dashboard-settings.jpg" width="1582" height="903" loading="lazy" alt="Mausely settings: active area, click timing, scroll speed and camera"><figcaption>Everything is tunable live.</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="start">
+    <div class="wrap">
+      <h2>Get started in a minute</h2>
+      <ol class="steps">
+        <li>Download <code>Mausely-x.y.z-win64.zip</code> from the <a href="https://github.com/mahdidigitalx-oss/mausely/releases/latest">latest release</a>.</li>
+        <li>Unzip it anywhere and run <code>mausely.exe</code>. No installer and no admin rights needed.</li>
+        <li>Show your open palm to the webcam and press <code>Ctrl+Alt+M</code>.</li>
+      </ol>
+      <p class="sub">Requires the <a href="https://aka.ms/vs/17/release/vc_redist.x64.exe">Microsoft Visual C++ Redistributable (x64)</a>, which most PCs already have.
+        Developers can <a href="https://github.com/mahdidigitalx-oss/mausely#-build-from-source">build from source</a> with CMake and any C++20 compiler.</p>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <h2>Frequently asked questions</h2>
+      <details><summary>How do I control my mouse with hand gestures on Windows?</summary>
+        <p>Download Mausely, run <code>mausely.exe</code>, show your palm to the webcam and press <code>Ctrl+Alt+M</code>. Move your open hand to move the cursor, pinch thumb and index finger to click, and make a V sign to scroll.</p></details>
+      <details><summary>Does it need a GPU, a depth camera or the internet?</summary>
+        <p>No. It runs on the CPU with any ordinary webcam, fully offline.</p></details>
+      <details><summary>Is it free?</summary>
+        <p>Yes. Mausely is free and open source under the MIT license.</p></details>
+      <details><summary>Does it work for left-handed users?</summary>
+        <p>Yes. The gesture features don't depend on which hand you use.</p></details>
+      <details><summary>Can I make it recognise my gestures better?</summary>
+        <p>Yes. Use the Recorder tab to capture a minute of each gesture, then retrain the model with the included Python script. Only hand landmark numbers are saved, never images.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Mausely © 2026 mahdidigitalx-oss and contributors · <a href="https://github.com/mahdidigitalx-oss/mausely/blob/main/LICENSE">MIT License</a> ·
+      <a href="https://github.com/mahdidigitalx-oss/mausely">Source code</a> ·
+      <a href="https://github.com/mahdidigitalx-oss/mausely/issues">Report an issue</a></p>
+    <p>Hand tracking models © Google (MediaPipe, Apache-2.0), ONNX conversion by OpenCV Zoo. Built with ONNX Runtime, Dear ImGui and ImPlot.
+      See <a href="https://github.com/mahdidigitalx-oss/mausely/blob/main/THIRD_PARTY_NOTICES.md">third-party notices</a>.</p>
+  </div>
+</footer>
+</body>
+</html>

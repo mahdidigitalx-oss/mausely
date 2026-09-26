@@ -1,0 +1,16 @@
+name: Feature or gesture request
+description: Suggest a new gesture, setting or improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like Mausely to do?
+      description: For gestures, describe the hand pose and the action it should trigger.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why is it useful?
+      description: Your use case (accessibility, presentations, gaming, ...)

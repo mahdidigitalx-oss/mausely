@@ -1,0 +1,31 @@
+name: Bug report
+description: Something does not work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: System
+      description: Windows version, CPU and webcam model
+      placeholder: Windows 11 23H2, Intel i5-8250U, Logitech C270
+    validations:
+      required: true
+  - type: textarea
+    id: benchmark
+    attributes:
+      label: Benchmark output
+      description: Output of `mausely.exe --benchmark 300` (run it in a terminal next to mausely.exe)
+      render: text
+  - type: textarea
+    id: log
+    attributes:
+      label: Log
+      description: Relevant lines from `%APPDATA%\Mausely\mausely.log`
+      render: text

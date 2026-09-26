@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gcc:
+    name: Windows · GCC (w64devkit)
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: .deps
+          key: deps-${{ hashFiles('cmake/*.cmake') }}
+      - name: Install w64devkit
+        shell: pwsh
+        run: |
+          Invoke-WebRequest https://github.com/skeeto/w64devkit/releases/download/v2.10.0/w64devkit-x64-2.10.0.7z.exe -OutFile w64devkit.exe
+          ./w64devkit.exe "-o$env:RUNNER_TEMP" -y | Out-Null
+          "$env:RUNNER_TEMP\w64devkit\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+      - name: Configure
+        shell: pwsh
+        env: { CC: gcc, CXX: g++ }
+        run: cmake --preset default
+      - name: Build
+        shell: pwsh
+        run: cmake --build build
+      - name: Test
+        shell: pwsh
+        run: ctest --test-dir build --output-on-failure
+      - name: Benchmark on a test photo
+        shell: pwsh
+        run: |
+          $p = Start-Process build\bin\mausely.exe -ArgumentList '--image', '.deps\testimages\victory.jpg', '--benchmark', '90' -NoNewWindow -Wait -PassThru -RedirectStandardOutput bench.txt
+          Get-Content bench.txt
+          if ($p.ExitCode -ne 0) { throw "benchmark failed" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mausely-win64-gcc
+          path: |
+            build/bin/mausely.exe
+            build/bin/onnxruntime.dll
+            build/bin/models/
+
+  msvc:
+    name: Windows · MSVC 2022
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: .deps
+          key: deps-${{ hashFiles('cmake/*.cmake') }}
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Configure
+        shell: pwsh
+        env: { CC: cl, CXX: cl }
+        run: cmake --preset default
+      - name: Build
+        shell: pwsh
+        run: cmake --build build
+      - name: Test
+        shell: pwsh
+        run: ctest --test-dir build --output-on-failure
+
+  python:
+    name: Training pipeline · Python
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: training
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install numpy onnx onnxruntime pytest
+      - name: Test
+        run: python -m pytest -q

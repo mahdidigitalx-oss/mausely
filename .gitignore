@@ -1,0 +1,10 @@
+/build/
+/build-*/
+/.deps/
+/dist/
+training/.venv/
+training/**/__pycache__/
+training/.pytest_cache/
+training/runs/
+*.pyc
+/.claude/

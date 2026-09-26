@@ -1,0 +1,83 @@
+{
+  "params": 12868,
+  "fps_30": {
+    "raw": {
+      "rmse_px": 2.2591371536254883,
+      "rmse_moving_px": 2.331768274307251,
+      "jitter_still_px": 2.6158487796783447,
+      "lag_ms": 0.0
+    },
+    "one_euro": {
+      "rmse_px": 2.121520075482091,
+      "rmse_moving_px": 2.2849217150544456,
+      "jitter_still_px": 1.694493953968017,
+      "lag_ms": 0.0
+    },
+    "one_euro_params": {
+      "min_cutoff": 1.0,
+      "beta": 320.0
+    },
+    "ai": {
+      "rmse_px": 1.886073112487793,
+      "rmse_moving_px": 2.0957953929901123,
+      "jitter_still_px": 0.9200732111930847,
+      "lag_ms": 0.0
+    },
+    "ai_predict_0.5": {
+      "rmse_px": 3.4420011043548584,
+      "rmse_moving_px": 4.094030857086182,
+      "jitter_still_px": 1.4435678720474243,
+      "lag_ms": 0.0
+    },
+    "one_euro_same_jitter": {
+      "rmse_px": 2.865684287303351,
+      "rmse_moving_px": 3.4088859603471136,
+      "jitter_still_px": 0.8339758007769185,
+      "lag_ms": 8.333333333333334
+    },
+    "one_euro_same_jitter_params": {
+      "min_cutoff": 0.3,
+      "beta": 40.0
+    }
+  },
+  "fps_15": {
+    "raw": {
+      "rmse_px": 2.952676296234131,
+      "rmse_moving_px": 3.276120901107788,
+      "jitter_still_px": 2.5858163833618164,
+      "lag_ms": 0.0
+    },
+    "one_euro": {
+      "rmse_px": 2.9029425428619593,
+      "rmse_moving_px": 3.278778167104931,
+      "jitter_still_px": 1.9503099972102051,
+      "lag_ms": 0.0
+    },
+    "one_euro_params": {
+      "min_cutoff": 1.5,
+      "beta": 320.0
+    },
+    "ai": {
+      "rmse_px": 2.497770309448242,
+      "rmse_moving_px": 2.8026416301727295,
+      "jitter_still_px": 1.3825054168701172,
+      "lag_ms": 0.0
+    },
+    "ai_predict_0.5": {
+      "rmse_px": 6.7251739501953125,
+      "rmse_moving_px": 7.999978065490723,
+      "jitter_still_px": 2.4168479442596436,
+      "lag_ms": 0.0
+    },
+    "one_euro_same_jitter": {
+      "rmse_px": 3.1677205352587703,
+      "rmse_moving_px": 3.672445033788553,
+      "jitter_still_px": 1.3543270403139045,
+      "lag_ms": 0.0
+    },
+    "one_euro_same_jitter_params": {
+      "min_cutoff": 0.6,
+      "beta": 80.0
+    }
+  }
+}
