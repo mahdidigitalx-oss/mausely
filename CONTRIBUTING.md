@@ -23,6 +23,23 @@ ctest --test-dir build --output-on-failure
 Any C++20 compiler for Windows works. CI builds with GCC ([w64devkit](https://github.com/skeeto/w64devkit))
 and MSVC 2022. The first configure downloads pinned, hash-checked dependencies into `.deps/`.
 
+The platform-independent core and the tests also build on Linux with the same commands
+(`cmake --preset default`, needs Ninja and GCC or Clang). Please keep new core code portable:
+Windows-only code belongs in `src/app`, `src/ui`, `src/capture/mf_camera.*` and
+`src/control/mouse_injector.cpp`.
+
+### Android
+
+```bash
+cd android
+./gradlew testDebugUnitTest lintDebug assembleDebug
+```
+
+Needs JDK 17+ and the Android SDK (Gradle installs the pinned NDK and CMake). The app builds the
+shared core from `src/` through `android/app/src/main/cpp/CMakeLists.txt`; its own native code is
+the JNI bridge (`jni_bridge.cpp`) and the input backend (`android_injector.cpp`). User-visible
+text lives in `res/values/strings.xml`, with the Arabic translation in `res/values-ar/`.
+
 Useful switches while developing:
 
 - `mausely.exe --image some_hand.jpg` runs the whole pipeline on a still photo.
@@ -62,5 +79,5 @@ The app refuses to load a model with a different version.
 ## Pull requests
 
 - Keep PRs focused; describe the user-visible change and how you tested it.
-- CI must be green (GCC, MSVC and Python jobs).
+- CI must be green (Windows GCC and MSVC, Linux, Android and Python jobs).
 - By contributing you agree that your work is released under the [MIT License](LICENSE).

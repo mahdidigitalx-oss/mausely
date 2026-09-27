@@ -73,6 +73,15 @@ struct Snapshot {
     std::string recordingPath;
 };
 
+// The few fields an input overlay needs on every display frame.
+struct LiveStatus {
+    bool enabled = false;
+    bool hand = false;
+    bool frozen = false;
+    Pose pose = GestureEngine::kNoHand;
+    float fistProgress = 0.f;
+};
+
 // Owns the capture and processing threads.
 class Pipeline {
 public:
@@ -83,11 +92,19 @@ public:
 
     // Loads models from `modelDir` and starts the threads. The factory is
     // called on the capture thread (with COM initialised) and again to reconnect.
+    // Without a factory no capture thread runs: the caller pushes frames with
+    // submitFrame() instead (Android camera callbacks).
     bool start(const Settings& settings, const std::wstring& modelDir, SourceFactory factory, std::string* error);
     void stop();
 
+    // Hands a frame to the processing thread (the latest frame wins). `f` gets a
+    // recycled buffer back. Set f.arrivalUs and an increasing f.index first.
+    void submitFrame(Frame& f);
+
     // Copies the latest state; moves out the metrics gathered since the last call.
     void snapshot(Snapshot& out);
+    // Cheap subset of the snapshot that does not consume the metrics.
+    LiveStatus status();
 
     // Dry run: everything runs but no input is ever sent to Windows (benchmarks).
     void setDryRun(bool on) { dryRun_ = on; }

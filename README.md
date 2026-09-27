@@ -2,10 +2,10 @@
   <img src="docs/banner.jpg" alt="Mausely – control your mouse with hand gestures using any webcam on Windows" width="100%">
 </p>
 
-<h1 align="center">Mausely – AI Hand Gesture Mouse for Windows</h1>
+<h1 align="center">Mausely – AI Hand Gesture Mouse for Windows and Android</h1>
 
 <p align="center">
-  <b>Control your computer with hand gestures using any webcam.</b><br>
+  <b>Control your computer or phone with hand gestures using any camera.</b><br>
   A free, open-source, touchless <b>virtual mouse</b> written in C++ with on-device AI hand tracking.<br>
   Runs fully offline on the CPU, and needs only about 8 ms per frame even on a 2012 laptop.
 </p>
@@ -15,12 +15,14 @@
   <a href="https://github.com/mahdidigitalx-oss/mausely/releases/latest"><img src="https://img.shields.io/github/v/release/mahdidigitalx-oss/mausely?label=download&color=2ea44f" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/mahdidigitalx-oss/mausely?color=blue" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078D6?logo=windows" alt="Windows 10 and 11">
+  <img src="https://img.shields.io/badge/platform-Android%208%2B-3DDC84?logo=android" alt="Android 8 and later">
   <img src="https://img.shields.io/badge/C%2B%2B-20-00599C?logo=cplusplus" alt="C++20">
   <img src="https://img.shields.io/badge/AI-ONNX%20Runtime-5C2D91" alt="ONNX Runtime">
 </p>
 
 <p align="center">
   <a href="#-download-and-quick-start">Download</a> ·
+  <a href="#-android">Android</a> ·
   <a href="#-gestures">Gestures</a> ·
   <a href="#-screenshots">Screenshots</a> ·
   <a href="#-how-it-works">How it works</a> ·
@@ -76,6 +78,51 @@ recognition in C++** with MediaPipe models and ONNX Runtime.
 
 > Tip: good, even lighting matters more than camera resolution. In dim light many webcams drop
 > from 30 to 15 fps.
+
+## 📱 Android
+
+The Android app runs the **same C++ hand tracking, gesture AI, smoother and gesture logic** as the
+Windows app, on the phone's front camera. Instead of a mouse it draws a pointer over all apps and
+acts like a finger: it taps, long-presses, drags, scrolls and goes back for you, so you can use
+the phone without touching it (propped up in the kitchen, from the sofa, or with limited hand
+mobility).
+
+| Hand gesture | On Android |
+|---|---|
+| Open hand | Move the pointer |
+| Thumb + index pinch | Tap. Hold it for a **long press**, move while pinched to **drag** or swipe |
+| Two quick pinches | Double tap on the same spot |
+| Thumb + middle pinch | **Back** (configurable: long press, Home, recent apps, notifications) |
+| V sign + move the hand | Scroll (the page follows your hand; can be reversed) |
+| Fist held for 1 second | Pause / resume |
+
+**Install and set up**
+
+1. Build the APK (below) or download the `mausely-android-debug` artifact of the latest
+   [CI run](https://github.com/mahdidigitalx-oss/mausely/actions/workflows/ci.yml), and install
+   `app-arm64-v8a-debug.apk` on the phone (Android 8.0 or later, 64-bit).
+2. Open Mausely and allow the camera.
+3. Turn on **Mausely hand control** in *Settings › Accessibility*. The app uses an accessibility
+   service because Android offers no other way for an app to tap and scroll. It performs gestures
+   only; it does not read your screen.
+   On Android 13 and later, apps installed outside Google Play first need *App info › ⋮ ›
+   Allow restricted settings*.
+4. Press **Start**, stand the phone up facing you, and show your open palm. Like the desktop app,
+   Mausely starts paused: hold a fist for 1 second (or tap **Paused**) to take control.
+
+Tracking keeps running in the background (with a notification to pause or stop it), so you can
+switch to any app. The app has no internet permission and does not store camera images. The
+**Performance**, **Gestures**, **Settings** and **Recorder** tabs mirror the desktop dashboard,
+and the interface is available in English and Arabic.
+
+**Build it**: JDK 17 or later and the Android SDK are needed; the NDK and CMake versions the
+project pins are installed by Gradle on first use.
+
+```bash
+cd android
+./gradlew assembleDebug          # app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
+./gradlew testDebugUnitTest lintDebug
+```
 
 ## ✋ Gestures
 
@@ -167,6 +214,10 @@ mausely.exe --benchmark 300
    The result goes to Windows through `SendInput`, so the cursor moves correctly across multiple
    monitors and DPI settings.
 
+On **Android** the same pipeline runs unchanged: CameraX delivers the newest front-camera frame
+through JNI, ONNX Runtime comes from its official Android package, and an accessibility service
+turns the mouse actions into touch gestures (a held pinch is a finger held on the screen).
+
 ### The two small AI models
 
 Both models are trained on **procedurally generated data** with PyTorch: no third-party dataset and
@@ -226,6 +277,13 @@ To build a portable release zip, run `powershell -File scripts\package.ps1`.
 | `--benchmark N` | Process N frames headless and print timing statistics; never moves the mouse |
 | `--screenshot out.bmp [--tab N]` | Render the dashboard for 4 s, save it and exit |
 
+The platform-independent core and its tests also build on Linux (CI runs them there), which is how
+the code shared with Android is kept portable:
+
+```bash
+cmake --preset default && cmake --build build && ctest --test-dir build --output-on-failure
+```
+
 ### Project layout
 
 | Folder | Contents |
@@ -236,6 +294,7 @@ To build a portable release zip, run `powershell -File scripts\package.ps1`.
 | [`src/capture`](src/capture) | Media Foundation webcam capture, still-image source |
 | [`src/pipeline`](src/pipeline) | Threads, settings file, snapshots for the UI |
 | [`src/ui`](src/ui) | Direct3D 11 window and the ImGui/ImPlot dashboard |
+| [`android/`](android) | Android app: CameraX service, JNI bridge to the C++ core, accessibility service, Compose UI |
 | [`training/`](training) | Python: hand model, data generators, training, ONNX export, tests |
 | [`tests/`](tests) | C++ unit and integration tests, including C++/Python parity checks |
 | [`docs/design`](docs/design) | Design document and implementation plan |
@@ -304,6 +363,8 @@ own data.
 - [ ] Installer / `winget` package
 - [ ] Per-application profiles and configurable gesture mapping
 - [ ] Two-hand gestures (zoom, rotate)
+- [x] Android version
+- [ ] Android: signed release APK, Quick Settings tile to start tracking
 
 Ideas and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 

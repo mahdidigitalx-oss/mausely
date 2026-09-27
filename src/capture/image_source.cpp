@@ -1,9 +1,9 @@
 #include "capture/image_source.h"
 
-#include <windows.h>
-
+#include <chrono>
 #include <cstdio>
 #include <memory>
+#include <thread>
 
 #include "core/clock.h"
 #include "core/log.h"
@@ -19,7 +19,7 @@
 namespace mausely {
 
 bool loadImageFile(const std::wstring& path, Frame& out, std::string* error) {
-    FILE* f = _wfopen(path.c_str(), L"rb");
+    FILE* f = openFile(path, "rb");
     if (!f) {
         if (error) *error = "Cannot open " + toUtf8(path);
         return false;
@@ -56,7 +56,7 @@ bool ImageSource::open(const std::wstring& path, double fps, std::string* error)
 bool ImageSource::read(Frame& out, std::string*) {
     // Pace like a camera so the pipeline sees realistic timing.
     int64_t now = Clock::nowUs();
-    if (now < nextUs_) Sleep(static_cast<DWORD>((nextUs_ - now) / 1000));
+    if (now < nextUs_) std::this_thread::sleep_for(std::chrono::microseconds(nextUs_ - now));
     nextUs_ += static_cast<int64_t>(1e6 / fps_);
     if (Clock::nowUs() > nextUs_ + 1'000'000) nextUs_ = Clock::nowUs();
 

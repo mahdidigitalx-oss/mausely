@@ -12,6 +12,14 @@ release zip the following components.
 | [ImPlot](https://github.com/epezent/implot) | 1.0 | MIT | dashboard plots |
 | [stb_image](https://github.com/nothings/stb) | 2c980bb | MIT / public domain | loading test images |
 
+The Android app additionally includes, from Google's Maven repository and Maven Central:
+
+| Component | Licence | Used for |
+|---|---|---|
+| [ONNX Runtime for Android](https://github.com/microsoft/onnxruntime) (`onnxruntime-android` 1.30.0) | MIT | `libonnxruntime.so` |
+| [AndroidX](https://developer.android.com/jetpack/androidx) Core, Activity, Lifecycle, CameraX, Jetpack Compose and Material 3 | Apache-2.0 | camera, services, UI |
+| [Kotlin](https://kotlinlang.org) standard library and kotlinx.coroutines | Apache-2.0 | app code |
+
 Build/test only (not redistributed):
 
 | Component | Licence | Used for |

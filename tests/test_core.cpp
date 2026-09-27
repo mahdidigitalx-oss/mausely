@@ -1,6 +1,7 @@
 #include <doctest/doctest.h>
 
 #include "core/geometry.h"
+#include "core/log.h"
 #include "core/rolling_stats.h"
 
 using namespace mausely;
@@ -29,4 +30,13 @@ TEST_CASE("normalizeRadians wraps into [-pi, pi)") {
     CHECK(normalizeRadians(3 * kPi) == doctest::Approx(-kPi));
     CHECK(normalizeRadians(-kPi / 2) == doctest::Approx(-kPi / 2));
     CHECK(normalizeRadians(2 * kPi + 0.25f) == doctest::Approx(0.25f));
+}
+
+TEST_CASE("UTF-8 and wide strings convert both ways") {
+    const std::string utf8 = "Ma\xC3\xBCsely \xE2\x9C\x8B \xF0\x9F\x96\xB1";  // "Maüsely ✋ 🖱"
+    const std::wstring wide = toWide(utf8);
+    CHECK(toUtf8(wide) == utf8);
+    CHECK(wide.substr(0, 3) == L"Ma\u00fc");
+    CHECK(toWide("").empty());
+    CHECK(toUtf8(L"plain") == "plain");
 }

@@ -1,5 +1,9 @@
 # Runtime assets: MediaPipe-derived hand models from OpenCV Zoo (Apache-2.0)
-# and a few MediaPipe test photos used by the integration tests.
+# and a few MediaPipe test photos used by the integration tests. The Android
+# app downloads the same models in android/app/build.gradle.kts.
+if(ANDROID)
+  return()
+endif()
 
 set(OPENCV_ZOO_COMMIT 47534e27c9851bb1128ccc0102f1145e27f23f98)
 set(OPENCV_ZOO_URL "https://media.githubusercontent.com/media/opencv/opencv_zoo/${OPENCV_ZOO_COMMIT}/models")
@@ -19,7 +23,7 @@ foreach(entry IN LISTS MAUSELY_THIRD_PARTY_MODELS)
 endforeach()
 
 # Our own models (trained by training/, committed to the repository).
-file(GLOB MAUSELY_OWN_MODELS "${CMAKE_SOURCE_DIR}/models/*.onnx")
+file(GLOB MAUSELY_OWN_MODELS "${PROJECT_SOURCE_DIR}/models/*.onnx")
 list(APPEND MAUSELY_MODEL_FILES ${MAUSELY_OWN_MODELS})
 
 if(MAUSELY_BUILD_TESTS)

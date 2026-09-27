@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 
 namespace mausely {
 
@@ -29,6 +30,33 @@ void sampleRgb(const Frame& frame, float x, float y, float* rgb) {
     rgb[0] = acc[0] * inv;
     rgb[1] = acc[1] * inv;
     rgb[2] = acc[2] * inv;
+}
+
+void rgbaToFrame(const uint8_t* rgba, int width, int height, int stride, int rotation, Frame& out) {
+    rotation = ((rotation % 360) + 360) % 360;
+    const bool swap = rotation == 90 || rotation == 270;
+    out.resize(swap ? height : width, swap ? width : height);
+    // Source pixel (x, y) lands at index o0 + x * dx + y * dy of the W x H output.
+    const ptrdiff_t w = out.width, h = out.height;
+    ptrdiff_t o0 = 0, dx = 1, dy = w;
+    switch (rotation) {
+        case 90: o0 = w - 1; dx = w; dy = -1; break;          // (x, y) -> (W - 1 - y, x)
+        case 180: o0 = w * h - 1; dx = -1; dy = -w; break;    // (x, y) -> (W - 1 - x, H - 1 - y)
+        case 270: o0 = (h - 1) * w; dx = -w; dy = 1; break;   // (x, y) -> (y, H - 1 - x)
+        default: break;
+    }
+    uint8_t* dst = out.bgra.data();
+    for (int y = 0; y < height; ++y) {
+        const uint8_t* s = rgba + static_cast<size_t>(y) * stride;
+        ptrdiff_t o = o0 + y * dy;
+        for (int x = 0; x < width; ++x, s += 4, o += dx) {
+            uint8_t* d = dst + o * 4;
+            d[0] = s[2];
+            d[1] = s[1];
+            d[2] = s[0];
+            d[3] = 255;
+        }
+    }
 }
 
 Letterbox letterboxToTensor(const Frame& frame, int dst, float* out) {

@@ -1,7 +1,5 @@
 #include "recorder/recorder.h"
 
-#include <windows.h>
-
 #include <ctime>
 #include <cwchar>
 
@@ -12,12 +10,12 @@ namespace mausely {
 bool Recorder::start(const std::wstring& folder, Pose label, int64_t nowUs, int64_t delayUs, int64_t durationUs,
                      std::string* error) {
     stop();
-    CreateDirectoryW(folder.c_str(), nullptr);
+    makeDirectory(folder);
     std::time_t t = std::time(nullptr);
     wchar_t stamp[32];
     std::wcsftime(stamp, 32, L"%Y%m%d_%H%M%S", std::localtime(&t));
     path_ = folder + toWide(poseName(label)) + L"_" + stamp + L".csv";
-    file_ = _wfopen(path_.c_str(), L"w");
+    file_ = openFile(path_, "w");
     if (!file_) {
         if (error) *error = "Cannot create " + toUtf8(path_);
         return false;

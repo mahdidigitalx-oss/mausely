@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_tagline">ماوس بإيماءات اليد</string>
+    <string name="privacy_note">كل شيء يعمل على هذا الهاتف. لا تُحفظ صور الكاميرا ولا تُرسل إلى أي مكان.</string>
+
+    <!-- Accessibility service -->
+    <string name="accessibility_label">التحكم باليد من Mausely</string>
+    <string name="accessibility_summary">تحكّم في الهاتف بإيماءات اليد أمام الكاميرا</string>
+    <string name="accessibility_description">يتيح لـ Mausely تحريك مؤشر على الشاشة والنقر والسحب والتمرير والرجوع نيابةً عنك عندما تشير بيدك أمام الكاميرا. لا يقرأ Mausely محتوى شاشتك، ولا تغادر صور الكاميرا هاتفك أبدًا.</string>
+    <string name="cursor_on">Mausely يعمل</string>
+    <string name="cursor_paused">Mausely متوقف مؤقتًا</string>
+
+    <!-- Tracking service -->
+    <string name="notification_channel">تتبّع اليد</string>
+    <string name="notification_title">Mausely يراقب يدك</string>
+    <string name="notification_on">التحكم مفعّل · اقبض يدك ثانية واحدة للإيقاف المؤقت</string>
+    <string name="notification_paused">متوقف مؤقتًا · اقبض يدك ثانية واحدة للاستئناف</string>
+    <string name="action_pause">إيقاف مؤقت</string>
+    <string name="action_resume">استئناف</string>
+    <string name="action_stop">إيقاف</string>
+    <string name="error_camera">تعذّر فتح الكاميرا: %1$s</string>
+
+    <!-- Setup -->
+    <string name="setup_camera">الوصول إلى الكاميرا</string>
+    <string name="setup_camera_desc">مطلوب لرؤية يدك.</string>
+    <string name="setup_allow">سماح</string>
+    <string name="setup_accessibility">خدمة إمكانية الوصول</string>
+    <string name="setup_accessibility_desc">تتيح لـ Mausely النقر والسحب والتمرير نيابةً عنك. فعّل «التحكم باليد من Mausely» في إعدادات إمكانية الوصول.</string>
+    <string name="setup_open_settings">فتح الإعدادات</string>
+    <string name="setup_restricted">المفتاح غير قابل للتفعيل؟ افتح معلومات التطبيق، واضغط ⋮ واختر «السماح بالإعدادات المحظورة» أولًا (Android 13 وما بعده، للتطبيقات المثبّتة من خارج Google Play).</string>
+    <string name="setup_app_info">معلومات التطبيق</string>
+    <string name="setup_camera_denied">يحتاج Mausely إلى الكاميرا لرؤية يدك. اسمح بها من معلومات التطبيق › الأذونات.</string>
+    <string name="error_title">تعذّر تشغيل Mausely</string>
+
+    <!-- Main controls -->
+    <string name="start_tracking">تشغيل</string>
+    <string name="stop_tracking">إيقاف</string>
+    <string name="starting">جارٍ التشغيل…</string>
+    <string name="control_on">التحكم مفعّل</string>
+    <string name="control_paused">متوقف مؤقتًا</string>
+    <string name="control_hint">اقبض يدك لمدة ثانية واحدة للتبديل بين التفعيل والإيقاف المؤقت.</string>
+    <string name="camera_idle">اضغط «تشغيل» وأظهر راحة يدك المفتوحة للكاميرا.</string>
+    <string name="camera_waiting">بانتظار الكاميرا…</string>
+    <string name="no_hand">لا توجد يد في الصورة – أظهر راحة يدك للكاميرا</string>
+    <string name="hand_info">اليد: %1$s · الثقة %2$.2f · %3$s</string>
+    <string name="hand_right">اليمنى</string>
+    <string name="hand_left">اليسرى</string>
+    <string name="hand_tracking">تتبّع</string>
+    <string name="hand_detected">اكتشاف</string>
+    <string name="camera_legend">المربع الأصفر = الجزء من الصورة الذي يقابل الشاشة كاملة.</string>
+    <string name="badge_on">التحكم مفعّل</string>
+    <string name="badge_paused">متوقف مؤقتًا</string>
+
+    <!-- Tabs -->
+    <string name="tab_performance">الأداء</string>
+    <string name="tab_gestures">الإيماءات</string>
+    <string name="tab_settings">الإعدادات</string>
+    <string name="tab_recorder">التسجيل</string>
+
+    <!-- Performance -->
+    <string name="kpi_camera_fps">إطارات الكاميرا/ث</string>
+    <string name="kpi_pipeline">المعالجة p50</string>
+    <string name="kpi_latency">الكاميرا ← اللمس</string>
+    <string name="kpi_cpu">المعالج (هذا التطبيق)</string>
+    <string name="stage">المرحلة (مللي ثانية)</string>
+    <string name="stage_wait">انتظار الإطار</string>
+    <string name="stage_palm">اكتشاف الكف</string>
+    <string name="stage_landmarks">نقاط اليد</string>
+    <string name="stage_gesture">ذكاء الإيماءات</string>
+    <string name="stage_smoothing">التنعيم</string>
+    <string name="stage_control">منطق الإيماءات</string>
+    <string name="stage_total">إجمالي المعالجة</string>
+    <string name="stage_latency">الكاميرا ← اللمس</string>
+    <string name="perf_hand_visible">اليد ظاهرة %1$.0f%% · إطارات مُسقطة %2$d</string>
+    <string name="perf_jitter">الارتجاف عند الثبات: الخام %1$.1f بكسل ← بعد التنعيم %2$.1f بكسل (−%3$.0f%%)</string>
+    <string name="perf_jitter_none">ثبّت يدك لقياس الارتجاف.</string>
+    <string name="perf_runtime">ONNX Runtime %1$s · خيوط الاستدلال: %2$d</string>
+
+    <!-- Gestures -->
+    <string name="pose_move">تحريك</string>
+    <string name="pose_pinch_index">نقر / سحب</string>
+    <string name="pose_pinch_middle">قرص الوسطى</string>
+    <string name="pose_scroll">تمرير</string>
+    <string name="pose_fist">قبضة (تبديل)</string>
+    <string name="pose_none">لا توجد يد</string>
+    <string name="current_pose">الإيماءة الحالية: %1$s</string>
+    <string name="counter_taps">النقرات</string>
+    <string name="counter_double">النقرات المزدوجة</string>
+    <string name="counter_middle">قرص الوسطى</string>
+    <string name="counter_drags">السحب</string>
+    <string name="counter_toggles">التبديل</string>
+    <string name="counter_scroll">وحدات التمرير</string>
+    <string name="gesture_ai_missing">ذكاء الإيماءات غير متاح – يعمل تحريك المؤشر فقط.</string>
+    <string name="guide_title">طريقة الاستخدام</string>
+    <string name="guide_move">يد مفتوحة – حرّك المؤشر (يتبع مركز الكف).</string>
+    <string name="guide_tap">المس طرفي الإبهام والسبابة – نقرة. استمر بالضغط – ضغطة مطوّلة. حرّك يدك وأنت تقرص – سحب.</string>
+    <string name="guide_double">قرصتان سريعتان – نقرة مزدوجة في المكان نفسه.</string>
+    <string name="guide_middle">المس طرفي الإبهام والوسطى – %1$s.</string>
+    <string name="guide_scroll">ارفع السبابة والوسطى (علامة النصر) وحرّك يدك – تمرير.</string>
+    <string name="guide_fist">اقبض يدك لمدة ثانية واحدة – إيقاف مؤقت أو استئناف.</string>
+
+    <!-- Settings -->
+    <string name="section_pointer">المؤشر</string>
+    <string name="active_area_h">المنطقة الفعّالة – أفقيًا</string>
+    <string name="active_area_v">المنطقة الفعّالة – عموديًا</string>
+    <string name="active_area_hint">كلما صغرت المنطقة قلّت حركة اليد اللازمة لعبور الشاشة.</string>
+    <string name="smoothing">التنعيم</string>
+    <string name="smoothing_none">بدون</string>
+    <string name="smoothing_one_euro">One Euro</string>
+    <string name="smoothing_ai">ذكاء اصطناعي</string>
+    <string name="smoothing_ai_predict">ذكاء اصطناعي + تنبؤ</string>
+    <string name="predict_strength">قوة التنبؤ</string>
+    <string name="cursor_size">حجم المؤشر</string>
+    <string name="section_touch">اللمس</string>
+    <string name="click_rewind">إرجاع موضع النقرة</string>
+    <string name="drag_threshold">عتبة السحب</string>
+    <string name="middle_pinch">قرص الإصبع الوسطى</string>
+    <string name="middle_back">رجوع</string>
+    <string name="middle_long_press">ضغطة مطوّلة</string>
+    <string name="middle_home">الشاشة الرئيسية</string>
+    <string name="middle_recents">التطبيقات الحديثة</string>
+    <string name="middle_notifications">الإشعارات</string>
+    <string name="middle_none">لا شيء</string>
+    <string name="scroll_speed">سرعة التمرير</string>
+    <string name="natural_scroll">تمرير طبيعي (الصفحة تتبع يدك)</string>
+    <string name="section_camera">الكاميرا</string>
+    <string name="camera_front">الأمامية</string>
+    <string name="camera_back">الخلفية</string>
+    <string name="resolution">الدقة</string>
+    <string name="mirror">عكس الصورة (عرض السيلفي)</string>
+    <string name="section_tracking">التتبّع</string>
+    <string name="hand_confidence">الثقة في اكتشاف اليد</string>
+    <string name="inference_threads">خيوط الاستدلال</string>
+    <string name="applies_on_restart">يُطبَّق عند الضغط على «تشغيل» في المرة القادمة.</string>
+    <string name="idle_throttle">توفير البطارية عندما لا تظهر أي يد</string>
+    <string name="reset_settings">استعادة الإعدادات الافتراضية</string>
+
+    <!-- Recorder -->
+    <string name="recorder_intro">سجّل يدك لتحسين ذكاء الإيماءات عليها (راجع training/README.md). تُحفظ أرقام نقاط اليد فقط، ولا تُحفظ أي صور.</string>
+    <string name="recorder_gesture">الإيماءة</string>
+    <string name="recorder_delay">البدء بعد</string>
+    <string name="recorder_duration">مدة التسجيل</string>
+    <string name="recorder_start">تسجيل</string>
+    <string name="recorder_stop">إيقاف</string>
+    <string name="recorder_waiting">استعد… %1$.0f ث</string>
+    <string name="recorder_recording">جارٍ التسجيل… متبقٍ %1$.0f ث · العينات: %2$d</string>
+    <string name="recorder_saved">آخر ملف: %1$s</string>
+    <string name="recorder_needs_tracking">شغّل التتبّع أولًا.</string>
+</resources>

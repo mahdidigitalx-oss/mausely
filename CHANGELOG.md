@@ -2,6 +2,26 @@
 
 All notable changes to Mausely are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- Android app (Android 8.0+, `android/`): the same C++ hand tracking, gesture AI, smoother and
+  gesture engine on the phone's front camera.
+  - Pointer overlay over all apps; pinch to tap, hold for a long press, pinch and move to drag,
+    V sign to scroll, middle-finger pinch for Back (or long press, Home, recent apps,
+    notifications), fist to pause or resume.
+  - Runs in a foreground service with Pause / Stop in its notification, so any app can be used.
+  - Dashboard with camera view and hand overlay, per-stage timings, gesture probabilities,
+    settings and the landmark recorder. English and Arabic.
+- The platform-independent core and its tests build and run on Linux; CI runs them there and
+  builds the Android APKs.
+
+### Changed
+- The core (`src/`) no longer calls Windows APIs directly: ONNX Runtime is loaded with `dlopen`
+  outside Windows, files are opened through `openFile()`, and the screen size and double-click
+  time come from the platform's input backend (`control/mouse_injector.h`).
+- `Pipeline` can take frames pushed by the caller (`submitFrame`) instead of running a capture thread.
+
 ## [0.1.0] – 2026-09-26
 
 First public release.

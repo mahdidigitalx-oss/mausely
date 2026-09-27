@@ -13,9 +13,6 @@ struct ScreenRect {
     int left = 0, top = 0, width = 1920, height = 1080;
 };
 
-// Bounding rectangle of all monitors in physical pixels (needs DPI awareness).
-ScreenRect virtualDesktop();
-
 // Maps normalised camera coordinates to virtual-desktop pixels.
 class CursorMapper {
 public:

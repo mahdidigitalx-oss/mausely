@@ -55,7 +55,7 @@ TEST_CASE("AI smoother matches the Python reference") {
     REQUIRE(v.observed.size() == 60);
     AiSmoother ai;
     std::string err;
-    REQUIRE_MESSAGE(ai.load(exeDirectory() + L"models\\smoother.onnx", &err), err);
+    REQUIRE_MESSAGE(ai.load(exeDirectory() + L"models/smoother.onnx", &err), err);
     for (size_t i = 0; i < v.observed.size(); ++i) {
         Vec2 o = ai.filter(v.observed[i], v.fps, 0.f);
         CHECK(o.x == doctest::Approx(v.aiEst[i].x).epsilon(1e-4));
@@ -68,7 +68,7 @@ TEST_CASE("smoothers cut jitter on a still, noisy hand") {
     std::normal_distribution<float> noise(0.f, 0.002f);  // ~1.4 px at 720p
     Smoother s;
     std::string err;
-    bool ai = s.loadAi(exeDirectory() + L"models\\smoother.onnx", &err);
+    bool ai = s.loadAi(exeDirectory() + L"models/smoother.onnx", &err);
     for (SmoothingMode mode : {SmoothingMode::OneEuro, SmoothingMode::Ai}) {
         if (mode == SmoothingMode::Ai && !ai) continue;
         CAPTURE(smoothingModeName(mode));

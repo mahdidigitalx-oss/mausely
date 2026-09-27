@@ -38,4 +38,9 @@ struct Settings {
 bool loadSettings(const std::wstring& path, Settings& s);
 bool saveSettings(const std::wstring& path, const Settings& s);
 
+// The same key=value text in memory (used by the Android app's UI).
+// Unknown keys, junk lines and out-of-range enum values are ignored.
+void parseSettings(const std::string& text, Settings& s);
+std::string formatSettings(const Settings& s);
+
 }  // namespace mausely

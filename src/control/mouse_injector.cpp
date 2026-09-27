@@ -7,6 +7,17 @@
 
 namespace mausely {
 
+ScreenRect virtualDesktop() {
+    ScreenRect r;
+    r.left = GetSystemMetrics(SM_XVIRTUALSCREEN);
+    r.top = GetSystemMetrics(SM_YVIRTUALSCREEN);
+    r.width = std::max(1, GetSystemMetrics(SM_CXVIRTUALSCREEN));
+    r.height = std::max(1, GetSystemMetrics(SM_CYVIRTUALSCREEN));
+    return r;
+}
+
+int64_t doubleClickTimeUs() { return static_cast<int64_t>(GetDoubleClickTime()) * 1000; }
+
 void MouseInjector::apply(const MouseActions& actions) {
     if (actions.empty()) return;
     const ScreenRect vd = virtualDesktop();

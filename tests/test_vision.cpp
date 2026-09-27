@@ -13,7 +13,7 @@ using namespace mausely;
 namespace {
 
 std::wstring testImage(const char* name) { return toWide(std::string(MAUSELY_TEST_IMAGE_DIR) + "/" + name); }
-std::wstring model(const wchar_t* name) { return exeDirectory() + L"models\\" + name; }
+std::wstring model(const wchar_t* name) { return exeDirectory() + L"models/" + name; }
 
 HandTracker& tracker() {
     static HandTracker t;

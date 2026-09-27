@@ -65,3 +65,48 @@ TEST_CASE("cropToTensor samples the right pixels") {
     CHECK(t[(4 * 8 + 4) * 3] == doctest::Approx(1.f));
     CHECK(t[(0 * 8 + 0) * 3] == doctest::Approx(0.f));
 }
+
+TEST_CASE("rgbaToFrame converts to BGRA and rotates clockwise") {
+    // 3x2 RGBA image with a 16-byte row stride (4 padding bytes); pixel value = its index.
+    const int w = 3, h = 2, stride = 16;
+    std::vector<uint8_t> rgba(stride * h, 0);
+    for (int y = 0; y < h; ++y)
+        for (int x = 0; x < w; ++x) {
+            uint8_t* p = &rgba[y * stride + x * 4];
+            p[0] = static_cast<uint8_t>(10 + y * w + x);  // R = marker
+            p[1] = 100;
+            p[2] = 200;
+            p[3] = 0;
+        }
+    auto red = [](const Frame& f, int x, int y) { return f.bgra[(static_cast<size_t>(y) * f.width + x) * 4 + 2]; };
+
+    Frame f;
+    rgbaToFrame(rgba.data(), w, h, stride, 0, f);
+    REQUIRE(f.width == 3);
+    REQUIRE(f.height == 2);
+    CHECK(f.bgra[0] == 200);  // B
+    CHECK(f.bgra[1] == 100);  // G
+    CHECK(f.bgra[3] == 255);  // opaque
+    CHECK(red(f, 2, 1) == 15);
+
+    // 90 degrees clockwise: the bottom-left source pixel becomes the top-left one.
+    rgbaToFrame(rgba.data(), w, h, stride, 90, f);
+    REQUIRE(f.width == 2);
+    REQUIRE(f.height == 3);
+    CHECK(red(f, 0, 0) == 13);
+    CHECK(red(f, 1, 0) == 10);
+    CHECK(red(f, 0, 2) == 15);
+
+    rgbaToFrame(rgba.data(), w, h, stride, 180, f);
+    REQUIRE(f.width == 3);
+    CHECK(red(f, 0, 0) == 15);
+    CHECK(red(f, 2, 1) == 10);
+
+    // 270 degrees clockwise: the top-right source pixel becomes the top-left one.
+    rgbaToFrame(rgba.data(), w, h, stride, 270, f);
+    REQUIRE(f.width == 2);
+    REQUIRE(f.height == 3);
+    CHECK(red(f, 0, 0) == 12);
+    CHECK(red(f, 1, 0) == 15);
+    CHECK(red(f, 0, 2) == 10);
+}

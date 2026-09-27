@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gestures and global actions only: the service never reads window content. -->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:canPerformGestures="true"
+    android:canRetrieveWindowContent="false"
+    android:description="@string/accessibility_description"
+    android:isAccessibilityTool="true"
+    tools:targetApi="31"
+    android:notificationTimeout="0"
+    android:settingsActivity="io.github.mahdidigitalx_oss.mausely.ui.MainActivity"
+    android:summary="@string/accessibility_summary" />

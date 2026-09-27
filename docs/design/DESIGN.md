@@ -1,4 +1,4 @@
-# Mausely — Hand-Gesture Mouse for Windows (Design)
+# Mausely — Hand-Gesture Mouse for Windows and Android (Design)
 
 Date: 2026-09-23 · Status: implemented in v0.1.0
 
@@ -105,6 +105,22 @@ Missing camera / models / ONNX Runtime DLL → dashboard shows a clear message a
 - Python (pytest): hand model limits, generator class separability, feature spec, export parity torch↔onnxruntime.
 - Benchmark mode for per-stage timing on the target laptop.
 
-## 10. Out of scope (v1)
+## 10. Android
+
+The Android app (`android/`) reuses `src/` unchanged except for platform seams; only capture, input and UI are new.
+
+| Topic | Decision | Why |
+|---|---|---|
+| Shared code | `src/` built with the NDK through `add_subdirectory` of the root CMake project (core + `Pipeline`) | one implementation of tracking, AI and gesture logic, covered by the same tests (also run on Linux in CI) |
+| Inference | `libonnxruntime.so` from the `onnxruntime-android` AAR (same version as the desktop headers), loaded with `dlopen` | same C API and loading path as Windows |
+| Camera | CameraX `ImageAnalysis`, RGBA, keep-only-latest, front camera 640×480; frames rotated upright in C++ (`rgbaToFrame`) and pushed with `Pipeline::submitFrame` | latest frame wins, as on the desktop |
+| Background | a foreground service of type `camera`, started from the app | the camera stays available while other apps are in front |
+| Input | an accessibility service: `TYPE_ACCESSIBILITY_OVERLAY` pointer + `dispatchGesture` with continued strokes (API 26) | the only way for an app to touch other apps; continued strokes let a press last exactly as long as the pinch |
+| Mapping | left button = finger down/up (tap, long press, drag); wheel = finger drag from the cursor after the touch slop, lifted after 150 ms without motion (no taps, no flings); right button = Back or another global action | touch-screen semantics for the same `MouseActions` |
+| UI | Jetpack Compose dashboard polling `Pipeline::snapshot` once per display frame; settings exchanged as the settings.ini text | no duplicated settings schema in Kotlin |
+
+`control/mouse_injector.h` is the platform input backend: `MouseInjector`, `virtualDesktop()` and `doubleClickTimeUs()` are implemented by `mouse_injector.cpp` on Windows and `android_injector.cpp` on Android (which forwards each batch to Kotlin through JNI).
+
+## 11. Out of scope (v1)
 
 Two-hand gestures, keyboard emulation, GPU execution provider (DirectML can be added later), installer (a portable zip is produced instead).

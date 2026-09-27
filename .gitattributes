@@ -5,3 +5,6 @@
 *.jpg binary
 *.ps1 text eol=crlf
 *.rc text eol=crlf
+*.jar binary
+gradlew text eol=lf
+*.bat text eol=crlf

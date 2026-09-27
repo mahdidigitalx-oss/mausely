@@ -8,3 +8,12 @@ training/.pytest_cache/
 training/runs/
 *.pyc
 /.claude/
+# Android
+android/.gradle/
+android/.kotlin/
+android/build/
+android/app/build/
+android/app/.cxx/
+android/local.properties
+.idea/
+*.iml

@@ -1,7 +1,12 @@
 #include "pipeline/pipeline.h"
 
+#ifdef _WIN32
 #include <windows.h>
 #include <objbase.h>
+#elif defined(__ANDROID__)
+#include <sys/resource.h>
+#include <unistd.h>
+#endif
 
 #include <chrono>
 
@@ -61,7 +66,7 @@ bool Pipeline::start(const Settings& settings, const std::wstring& modelDir, Sou
     dropped_ = 0;
     hasPending_ = false;
     running_ = true;
-    captureThread_ = std::thread(&Pipeline::captureLoop, this);
+    if (factory_) captureThread_ = std::thread(&Pipeline::captureLoop, this);
     processThread_ = std::thread(&Pipeline::processLoop, this);
     if (!trackerOk && error) *error = status;
     return trackerOk;
@@ -83,6 +88,21 @@ void Pipeline::updateSettings(const Settings& s) {
 void Pipeline::startRecording(Pose label, double delaySeconds, double seconds, const std::wstring& folder) {
     std::lock_guard<std::mutex> lock(requestMutex_);
     recordRequest_ = {true, label, delaySeconds, seconds, folder};
+}
+
+void Pipeline::submitFrame(Frame& f) {
+    {
+        std::lock_guard<std::mutex> lock(frameMutex_);
+        if (hasPending_) ++dropped_;
+        std::swap(pending_, f);
+        hasPending_ = true;
+    }
+    frameCv_.notify_one();
+}
+
+LiveStatus Pipeline::status() {
+    std::lock_guard<std::mutex> lock(snapMutex_);
+    return {snap_.enabled, snap_.hand.valid, snap_.frozen, snap_.pose, snap_.fistProgress};
 }
 
 void Pipeline::snapshot(Snapshot& out) {
@@ -108,7 +128,9 @@ void Pipeline::snapshot(Snapshot& out) {
 }
 
 void Pipeline::captureLoop() {
+#ifdef _WIN32
     CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+#endif
     std::unique_ptr<FrameSource> source;
     Frame f;
     auto setStatus = [this](const std::string& s, const std::string& name, double fps) {
@@ -120,7 +142,7 @@ void Pipeline::captureLoop() {
         }
     };
     auto sleepWhileRunning = [this](int ms) {
-        for (int i = 0; i < ms / 50 && running_; ++i) Sleep(50);
+        for (int i = 0; i < ms / 50 && running_; ++i) std::this_thread::sleep_for(std::chrono::milliseconds(50));
     };
 
     while (running_) {
@@ -143,20 +165,20 @@ void Pipeline::captureLoop() {
             sleepWhileRunning(1000);
             continue;
         }
-        {
-            std::lock_guard<std::mutex> lock(frameMutex_);
-            if (hasPending_) ++dropped_;
-            std::swap(pending_, f);
-            hasPending_ = true;
-        }
-        frameCv_.notify_one();
+        submitFrame(f);
     }
     source.reset();
+#ifdef _WIN32
     CoUninitialize();
+#endif
 }
 
 void Pipeline::processLoop() {
+#ifdef _WIN32
     SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
+#elif defined(__ANDROID__)
+    setpriority(PRIO_PROCESS, static_cast<id_t>(gettid()), -4);  // THREAD_PRIORITY_DISPLAY
+#endif
     Frame f;
     while (running_) {
         {
@@ -196,7 +218,7 @@ void Pipeline::applyPending() {
             smoother_.setPredictStrength(settings_.predictStrength);
             smoother_.setMode(settings_.smoothing);
             GestureConfig gc = settings_.gestures;
-            gc.doubleClickUs = static_cast<int64_t>(GetDoubleClickTime()) * 1000;
+            gc.doubleClickUs = doubleClickTimeUs();
             engine_.setConfig(gc);
         }
         if (recordRequest_.pending) {

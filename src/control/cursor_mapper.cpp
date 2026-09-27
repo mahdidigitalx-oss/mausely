@@ -1,19 +1,8 @@
 #include "control/cursor_mapper.h"
 
-#include <windows.h>
-
 #include <algorithm>
 
 namespace mausely {
-
-ScreenRect virtualDesktop() {
-    ScreenRect r;
-    r.left = GetSystemMetrics(SM_XVIRTUALSCREEN);
-    r.top = GetSystemMetrics(SM_YVIRTUALSCREEN);
-    r.width = std::max(1, GetSystemMetrics(SM_CXVIRTUALSCREEN));
-    r.height = std::max(1, GetSystemMetrics(SM_CYVIRTUALSCREEN));
-    return r;
-}
 
 void CursorMapper::configure(const ActiveRegion& region, bool mirror, const ScreenRect& screen) {
     region_ = region;

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Mausely pointer with the "hand landmarks" glyph, inside the 66 dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#33000000"
+        android:pathData="M39.5,31.5 L39.5,75.7 L50.4,65.6 L57.4,81.7 L64.5,78.6 L57.4,62.7 L71.7,62.7 Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M37,29 L37,73.2 L47.9,63.1 L54.9,79.2 L62,76.1 L54.9,60.2 L69.2,60.2 Z" />
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2.2"
+        android:pathData="M71,31 L65.5,42 M71,31 L76.5,42" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M71,31 m-3.6,0 a3.6,3.6 0,1 1,7.2 0 a3.6,3.6 0,1 1,-7.2 0 M65.5,42 m-3,0 a3,3 0,1 1,6 0 a3,3 0,1 1,-6 0 M76.5,42 m-3,0 a3,3 0,1 1,6 0 a3,3 0,1 1,-6 0" />
+</vector>

@@ -14,7 +14,7 @@ using namespace mausely;
 
 namespace {
 
-std::wstring model(const wchar_t* name) { return exeDirectory() + L"models\\" + name; }
+std::wstring model(const wchar_t* name) { return exeDirectory() + L"models/" + name; }
 
 }  // namespace
 

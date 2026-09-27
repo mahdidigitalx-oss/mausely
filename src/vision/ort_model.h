@@ -12,12 +12,21 @@ struct OrtMemoryInfo;
 
 namespace mausely {
 
-// Loads onnxruntime.dll at runtime and owns the global OrtEnv.
+// File name of the ONNX Runtime shared library on this platform.
+#ifdef _WIN32
+inline constexpr wchar_t kOrtLibraryName[] = L"onnxruntime.dll";
+#else
+inline constexpr wchar_t kOrtLibraryName[] = L"libonnxruntime.so";
+#endif
+
+// Loads the ONNX Runtime shared library at runtime and owns the global OrtEnv.
 class OrtRuntime {
 public:
     static OrtRuntime& instance();
 
-    // Loads the DLL from `dllPath` (idempotent). Returns false with `error` set on failure.
+    // Loads the library from `dllPath` (idempotent). A bare file name uses the
+    // platform's search path (Android: the app's native library folder).
+    // Returns false with `error` set on failure.
     bool init(const std::wstring& dllPath, std::string* error);
     bool ready() const { return api_ != nullptr; }
     const OrtApi* api() const { return api_; }

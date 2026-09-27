@@ -6,6 +6,8 @@
 #include <map>
 #include <string>
 
+#include "core/log.h"
+
 namespace mausely {
 namespace {
 
@@ -77,29 +79,45 @@ std::string trim(const std::string& s) {
 
 }  // namespace
 
-bool loadSettings(const std::wstring& path, Settings& s) {
-    FILE* f = _wfopen(path.c_str(), L"r");
-    if (!f) return false;
-    char line[512];
-    while (std::fgets(line, sizeof line, f)) {
-        std::string l = trim(line);
+void parseSettings(const std::string& text, Settings& s) {
+    size_t pos = 0;
+    while (pos < text.size()) {
+        size_t end = text.find('\n', pos);
+        if (end == std::string::npos) end = text.size();
+        std::string l = trim(text.substr(pos, end - pos));
+        pos = end + 1;
         if (l.empty() || l[0] == '#' || l[0] == ';') continue;
         size_t eq = l.find('=');
         if (eq == std::string::npos) continue;
         auto it = fields().find(trim(l.substr(0, eq)));
         if (it != fields().end()) it->second.set(s, trim(l.substr(eq + 1)));
     }
+}
+
+std::string formatSettings(const Settings& s) {
+    std::string text = "# Mausely settings\n";
+    for (const auto& [key, field] : fields()) text += key + "=" + field.get(s) + "\n";
+    return text;
+}
+
+bool loadSettings(const std::wstring& path, Settings& s) {
+    FILE* f = openFile(path, "r");
+    if (!f) return false;
+    std::string text;
+    char buf[4096];
+    size_t n;
+    while ((n = std::fread(buf, 1, sizeof buf, f)) > 0) text.append(buf, n);
     std::fclose(f);
+    parseSettings(text, s);
     return true;
 }
 
 bool saveSettings(const std::wstring& path, const Settings& s) {
-    FILE* f = _wfopen(path.c_str(), L"w");
+    FILE* f = openFile(path, "w");
     if (!f) return false;
-    std::fprintf(f, "# Mausely settings\n");
-    for (const auto& [key, field] : fields()) std::fprintf(f, "%s=%s\n", key.c_str(), field.get(s).c_str());
-    std::fclose(f);
-    return true;
+    const std::string text = formatSettings(s);
+    bool ok = std::fwrite(text.data(), 1, text.size(), f) == text.size();
+    return std::fclose(f) == 0 && ok;
 }
 
 }  // namespace mausely

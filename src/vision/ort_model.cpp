@@ -1,6 +1,12 @@
 #include "vision/ort_model.h"
 
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <dlfcn.h>
+#endif
+
+#include <cstdio>
 
 #include <onnxruntime_c_api.h>
 
@@ -17,6 +23,33 @@ bool check(const OrtApi* api, OrtStatus* status, std::string* error, const char*
     return false;
 }
 
+using GetApiBaseFn = const OrtApiBase*(ORT_API_CALL*)();
+
+// Loads the library and returns its OrtGetApiBase, or nullptr with `error` set.
+GetApiBaseFn loadOrtLibrary(const std::wstring& path, std::string* error) {
+#ifdef _WIN32
+    // Full path: never pick up an older onnxruntime.dll from System32.
+    HMODULE dll = LoadLibraryExW(path.c_str(), nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
+    if (!dll) {
+        if (error) {
+            *error = "Cannot load " + toUtf8(path) + " (error " + std::to_string(GetLastError()) +
+                     "). Install the Microsoft Visual C++ 2015-2022 x64 Redistributable if it is missing.";
+        }
+        return nullptr;
+    }
+    void* fn = reinterpret_cast<void*>(GetProcAddress(dll, "OrtGetApiBase"));
+#else
+    void* lib = dlopen(toUtf8(path).c_str(), RTLD_NOW | RTLD_LOCAL);
+    if (!lib) {
+        if (error) *error = "Cannot load " + toUtf8(path) + ": " + dlerror();
+        return nullptr;
+    }
+    void* fn = dlsym(lib, "OrtGetApiBase");
+#endif
+    if (!fn && error) *error = "OrtGetApiBase not found in " + toUtf8(path);
+    return reinterpret_cast<GetApiBaseFn>(fn);
+}
+
 }  // namespace
 
 OrtRuntime& OrtRuntime::instance() {
@@ -26,25 +59,12 @@ OrtRuntime& OrtRuntime::instance() {
 
 bool OrtRuntime::init(const std::wstring& dllPath, std::string* error) {
     if (api_) return true;
-    // Full path: never pick up an older onnxruntime.dll from System32.
-    HMODULE dll = LoadLibraryExW(dllPath.c_str(), nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
-    if (!dll) {
-        if (error) {
-            *error = "Cannot load " + toUtf8(dllPath) + " (error " + std::to_string(GetLastError()) +
-                     "). Install the Microsoft Visual C++ 2015-2022 x64 Redistributable if it is missing.";
-        }
-        return false;
-    }
-    using GetApiBaseFn = const OrtApiBase*(ORT_API_CALL*)();
-    auto getApiBase = reinterpret_cast<GetApiBaseFn>(reinterpret_cast<void*>(GetProcAddress(dll, "OrtGetApiBase")));
-    if (!getApiBase) {
-        if (error) *error = "OrtGetApiBase not found in " + toUtf8(dllPath);
-        return false;
-    }
+    GetApiBaseFn getApiBase = loadOrtLibrary(dllPath, error);
+    if (!getApiBase) return false;
     const OrtApiBase* base = getApiBase();
     const OrtApi* api = base->GetApi(ORT_API_VERSION);
     if (!api) {
-        if (error) *error = std::string("onnxruntime.dll ") + base->GetVersionString() + " is older than required API " +
+        if (error) *error = "ONNX Runtime " + std::string(base->GetVersionString()) + " is older than required API " +
                             std::to_string(ORT_API_VERSION);
         return false;
     }
@@ -87,10 +107,17 @@ bool OrtModel::loadSession(const std::wstring& path, int intraOpThreads, std::st
         if (error) *error = "ONNX Runtime is not initialised";
         return false;
     }
-    if (GetFileAttributesW(path.c_str()) == INVALID_FILE_ATTRIBUTES) {
+    if (FILE* probe = openFile(path, "rb")) {
+        std::fclose(probe);
+    } else {
         if (error) *error = "Model file not found: " + toUtf8(path);
         return false;
     }
+#ifdef _WIN32
+    const std::wstring& ortPath = path;  // ORTCHAR_T is wchar_t on Windows, char elsewhere
+#else
+    const std::string ortPath = toUtf8(path);
+#endif
 
     OrtSessionOptions* opts = nullptr;
     if (!check(api, api->CreateSessionOptions(&opts), error, "CreateSessionOptions")) return false;
@@ -101,7 +128,7 @@ bool OrtModel::loadSession(const std::wstring& path, int intraOpThreads, std::st
               // Worker threads sleep instead of spinning: the app runs all day
               // next to other programs, so idle CPU matters more than ~0.1 ms.
               check(api, api->AddSessionConfigEntry(opts, "session.intra_op.allow_spinning", "0"), error, "spinning") &&
-              check(api, api->CreateSession(rt.env(), path.c_str(), opts, &session_), error, "CreateSession");
+              check(api, api->CreateSession(rt.env(), ortPath.c_str(), opts, &session_), error, "CreateSession");
     api->ReleaseSessionOptions(opts);
     if (!ok) return false;
 
@@ -117,7 +144,7 @@ bool OrtModel::loadSession(const std::wstring& path, int intraOpThreads, std::st
                               : api->SessionGetOutputName(session_, i, alloc, &name);
         if (!check(api, st, error, "GetName")) return false;
         info.name = name;
-        api->AllocatorFree(alloc, name);
+        check(api, api->AllocatorFree(alloc, name), nullptr, "AllocatorFree");
 
         OrtTypeInfo* typeInfo = nullptr;
         st = input ? api->SessionGetInputTypeInfo(session_, i, &typeInfo)
@@ -233,7 +260,7 @@ std::string OrtModel::metadata(const std::string& key) const {
         check(api, api->ModelMetadataLookupCustomMetadataMap(meta, alloc, key.c_str(), &value), nullptr, "") &&
         value) {
         result = value;
-        api->AllocatorFree(alloc, value);
+        check(api, api->AllocatorFree(alloc, value), nullptr, "AllocatorFree");
     }
     api->ReleaseModelMetadata(meta);
     return result;

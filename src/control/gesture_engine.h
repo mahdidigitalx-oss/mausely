@@ -16,7 +16,7 @@ struct GestureConfig {
     int enterFrames = 1;            // ... for this many consecutive frames (the EMA already needs ~2)
     int64_t clickRewindUs = 100'000;  // click lands where the cursor was this long ago
     float dragThresholdPx = 18.f;   // hand travel that turns a held pinch into a drag
-    int64_t doubleClickUs = 500'000;  // GetDoubleClickTime()
+    int64_t doubleClickUs = 500'000;  // doubleClickTimeUs()
     float doubleClickSnapPx = 20.f;
     float scrollGain = 1.5f;        // wheel units per screen pixel of hand travel
     float scrollDeadzonePx = 1.5f;  // per-frame hand motion ignored while scrolling
