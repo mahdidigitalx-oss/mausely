@@ -20,13 +20,15 @@ android {
 
     }
 
-    // One APK per ABI: arm64-v8a for phones, x86_64 for emulators and Chromebooks.
+    // One APK per ABI (arm64-v8a for most phones and tablets, armeabi-v7a for 32-bit
+    // ones) plus a universal one for when unsure. x86 emulators and Chromebooks run
+    // ARM apps through translation.
     splits {
         abi {
             isEnable = true
             reset()
-            include("arm64-v8a", "x86_64")
-            isUniversalApk = false
+            include("arm64-v8a", "armeabi-v7a")
+            isUniversalApk = true
         }
     }
 
@@ -56,8 +58,9 @@ android {
 
     packaging {
         jniLibs {
-            // Only the ONNX Runtime C library is used (from C++), not its Java bindings.
-            excludes += "**/libonnxruntime4j_jni.so"
+            // Only the ONNX Runtime C library is used (from C++), not its Java bindings,
+            // and only for the ABIs we build.
+            excludes += listOf("**/libonnxruntime4j_jni.so", "lib/x86/**", "lib/x86_64/**")
             // Compressed: halves the download (ONNX Runtime alone is 33 MB uncompressed).
             useLegacyPackaging = true
         }

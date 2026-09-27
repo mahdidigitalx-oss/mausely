@@ -5,8 +5,8 @@ All notable changes to Mausely are documented here. The project follows [Semanti
 ## [Unreleased]
 
 ### Added
-- Android app (Android 8.0+, `android/`): the same C++ hand tracking, gesture AI, smoother and
-  gesture engine on the phone's front camera.
+- Android app (Android 8.0+, 64- and 32-bit ARM, `android/`): the same C++ hand tracking,
+  gesture AI, smoother and gesture engine on the front camera of phones and tablets.
   - Pointer overlay over all apps; pinch to tap, hold for a long press, pinch and move to drag,
     V sign to scroll, middle-finger pinch for Back (or long press, Home, recent apps,
     notifications), fist to pause or resume.

@@ -100,7 +100,8 @@ mobility).
 
 1. Build the APK (below) or download the `mausely-android-debug` artifact of the latest
    [CI run](https://github.com/mahdidigitalx-oss/mausely/actions/workflows/ci.yml), and install
-   `app-arm64-v8a-debug.apk` on the phone (Android 8.0 or later, 64-bit).
+   `app-universal-debug.apk` on the phone or tablet (Android 8.0 or later). The smaller
+   `arm64-v8a` and `armeabi-v7a` APKs are for 64-bit and 32-bit devices respectively.
 2. Open Mausely and allow the camera.
 3. Turn on **Mausely hand control** in *Settings › Accessibility*. The app uses an accessibility
    service because Android offers no other way for an app to tap and scroll. It performs gestures
@@ -120,7 +121,7 @@ project pins are installed by Gradle on first use.
 
 ```bash
 cd android
-./gradlew assembleDebug          # app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
+./gradlew assembleDebug          # app/build/outputs/apk/debug/app-universal-debug.apk
 ./gradlew testDebugUnitTest lintDebug
 ```
 
